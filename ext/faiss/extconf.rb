@@ -19,14 +19,18 @@ abort "Numo not found" unless find_header("numo/narray.h", numo)
 # for https://bugs.ruby-lang.org/issues/19005
 $LDFLAGS += " -Wl,-undefined,dynamic_lookup" if RbConfig::CONFIG["host_os"] =~ /darwin/i
 
-$CXXFLAGS += " -std=c++17 $(optflags) -DFINTEGER=int"
+$CXXFLAGS += " -std=c++17 -DFINTEGER=int"
 $CXXFLAGS += " -Wall -Wno-unused-parameter -Wno-unused-function -Wno-unused-variable -Wno-unused-private-field -Wno-deprecated-declarations -Wno-sign-compare"
 
 # CPU-specific optimization flags
 cpu_arch = RbConfig::CONFIG["host_cpu"]
-is_macos = RbConfig::CONFIG["host_os"].include?("darwin")
+is_macos = RbConfig::CONFIG["host_os"].downcase.include?("darwin")
 
-if cpu_arch =~ /x86_64|i686|i386/
+# Remove any -march flag to avoid accidental AVX-512 or other issues
+$CXXFLAGS.gsub!(/-march=[^\s]+/, "")
+$CFLAGS.gsub!(/-march=[^\s]+/, "")
+
+if cpu_arch =~ /x86_64/
   # Force AVX2 for x86_64 platforms, regardless of CPU capabilities
   $CXXFLAGS += " -mavx2"
   $CFLAGS += " -mavx2"
