@@ -24,6 +24,8 @@ $CXXFLAGS += " -Wall -Wno-unused-parameter -Wno-unused-function -Wno-unused-vari
 
 # CPU-specific optimization flags
 cpu_arch = RbConfig::CONFIG["host_cpu"]
+is_macos = RbConfig::CONFIG["host_os"].include?("darwin")
+
 if cpu_arch =~ /x86_64|i686|i386/
   # Force AVX2 for x86_64 platforms, regardless of CPU capabilities
   $CXXFLAGS += " -mavx2"
