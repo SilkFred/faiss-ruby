@@ -22,9 +22,16 @@ $LDFLAGS += " -Wl,-undefined,dynamic_lookup" if RbConfig::CONFIG["host_os"] =~ /
 $CXXFLAGS += " -std=c++17 $(optflags) -DFINTEGER=int"
 $CXXFLAGS += " -Wall -Wno-unused-parameter -Wno-unused-function -Wno-unused-variable -Wno-unused-private-field -Wno-deprecated-declarations -Wno-sign-compare"
 
-# -march=native not supported with ARM Mac
-default_optflags = RbConfig::CONFIG["host_os"] =~ /darwin/i && RbConfig::CONFIG["host_cpu"] =~ /arm|aarch64/i ? "" : " -march=native"
-$CXXFLAGS += with_config("optflags", default_optflags)
+# CPU-specific optimization flags
+cpu_arch = RbConfig::CONFIG["host_cpu"]
+if cpu_arch =~ /x86_64|i686|i386/
+  # Force AVX2 for x86_64 platforms, regardless of CPU capabilities
+  $CXXFLAGS += " -mavx2"
+  $CFLAGS += " -mavx2"
+elsif cpu_arch =~ /arm|aarch64/
+  # No specific CPU flags for ARM platforms
+  # Let the compiler choose appropriate optimizations
+end
 
 apple_clang = RbConfig::CONFIG["CC_VERSION_MESSAGE"] =~ /apple clang/i
 $CXXFLAGS += " -Xclang" if apple_clang
