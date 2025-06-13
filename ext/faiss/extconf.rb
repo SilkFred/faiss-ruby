@@ -1,4 +1,13 @@
 require "mkmf-rice"
+# Ensure Rice headers are found in any Bundler context, everywhere
+begin
+  rice_gem = Gem.loaded_specs["rice"]
+  rice_include = File.join(rice_gem.full_gem_path, "include")
+  $INCFLAGS << " -I#{rice_include}"
+rescue
+  abort "Could not find the rice gem or its headers"
+end
+
 require "numo/narray"
 
 # libomp changed to keg-only
