@@ -4,6 +4,7 @@ begin
   rice_lib = File.join(rice_gem.full_gem_path, "lib")
   $LOAD_PATH.unshift(rice_lib) unless $LOAD_PATH.include?(rice_lib)
   rice_include = File.join(rice_gem.full_gem_path, "include")
+  $INCFLAGS = "" unless $INCFLAGS
   $INCFLAGS << " -I#{rice_include}"
 rescue => e
   abort "Could not add rice gem paths: #{e}"
