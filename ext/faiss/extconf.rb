@@ -28,6 +28,12 @@ if cpu_arch =~ /x86_64|i686|i386/
   # Force AVX2 for x86_64 platforms, regardless of CPU capabilities
   $CXXFLAGS += " -mavx2"
   $CFLAGS += " -mavx2"
+
+  # On macOS, must also enable FMA for AVX2 code using FMA intrinsics!
+  if is_macos
+    $CXXFLAGS += " -mfma"
+    $CFLAGS += " -mfma"
+  end
 elsif cpu_arch =~ /arm|aarch64/
   # No specific CPU flags for ARM platforms
   # Let the compiler choose appropriate optimizations
